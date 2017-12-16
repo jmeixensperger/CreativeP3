@@ -1,14 +1,14 @@
 /*******************************************************************************
- * Assignment: Project 1 - Lexical Analyzer for Scheme to C++ Translator        *
- * Author: Jack Meixensperger, Jeff Booher-Kaeding, Nick Giaccio                *
- * Date: Fall 2017                                                              *
- * File: LexicalAnalyzer.h                                                      *
+ * Assignment: Project 3 - Syntactical Analyzer for Scheme program	        *
+ * Author: Team Creative					                *
+ * Date: 12-16-2017                                                             *
+ * File: SyntacticalAnaylzer.cpp                                                *
  *                                                                              *
  * Description: This file contains the implementations for the Syntactical      *
- * 		Analyzer class. This includes our rule-lookup table, for        *
- * 		deciding which rule to use depending on our current position in *
- * 		parsing, and our non-terminal functions, which define the       *
- * 		behavior and rules for each type of non-terminal.               *
+ * 		Analyzer class. This includes our rule-lookup table, for       	*
+ * 		deciding which rule to use depending on our current position in	*
+ * 		parsing, and our non-terminal functions, which define the     	*
+ * 		behavior and rules for each type of non-terminal.            	*
  *******************************************************************************/
 
 #include <iostream>
@@ -78,7 +78,8 @@ SyntacticalAnalyzer::~SyntacticalAnalyzer ()
  *                                                                              *
  * Parameters: none                                                             *
  * Return value: an integer value, the number of errors                         *
- * Description: This function will                                              *
+ * Description: This fucntion handles all cases which involve the               *
+ *			"program" rule of our grammar.				*
  *******************************************************************************/
 int SyntacticalAnalyzer::Program ()
 {
@@ -104,9 +105,10 @@ int SyntacticalAnalyzer::Program ()
 /*******************************************************************************
  * Function: Define()                                                           *
  *                                                                              *
- * Parameters:                                                                  *
- * Return value:                                                                *
- * Description: This function will                                              *
+ * Parameters: none                                                             *
+ * Return value: an integer value, the number of errors                         *
+ * Description: This fucntion handles all cases which involve the               *
+ *			"define" rules of our grammar.				*
  *******************************************************************************/
 int SyntacticalAnalyzer::Define()
 {
@@ -151,16 +153,17 @@ int SyntacticalAnalyzer::Define()
 	}
 	token = lex->GetToken();
 	p2file << "Exiting Define function; current token is: "
-		   << lex->GetTokenName(token) << /*", lexeme: " << lex->GetLexeme()*/ << endl;
+		   << lex->GetTokenName(token) /*<< ", lexeme: " << lex->GetLexeme()*/ << endl;
 	return errors;
 }
 
 /*******************************************************************************
  * Function: More_Defines()                                                     *
  *                                                                              *
- * Parameters:                                                                  *
- * Return value:                                                                *
- * Description: This function will                                              *
+ * Parameters: none                                                             *
+ * Return value: an integer value, the number of errors                         *
+ * Description: This fucntion handles all cases which involve the               *
+ *			"more defines" rules of our grammar.			*
  *******************************************************************************/
 int SyntacticalAnalyzer::More_Defines()
 {
@@ -176,16 +179,17 @@ int SyntacticalAnalyzer::More_Defines()
 		token = lex->GetToken();
 	}
 	p2file << "Exiting Stmt_List function; current token is: "
-		   << lex->GetTokenName(token) << /*", lexeme: " << lex->GetLexeme()*/ << endl;
+		   << lex->GetTokenName(token) /*<< ", lexeme: " << lex->GetLexeme()*/ << endl;
 	return errors;
 }
 
 /*******************************************************************************
  * Function: Stmt_List()                                                        *
  *                                                                              *
- * Parameters:                                                                  *
- * Return value:                                                                *
- * Description: This function will                                              *
+ * Parameters: none                                                             *
+ * Return value: an integer value, the number of errors                         *
+ * Description: This fucntion handles all cases which involve the               *
+ *			"statement list" rules of our grammar.			*
  *******************************************************************************/
 int SyntacticalAnalyzer::Stmt_List()
 {
@@ -207,9 +211,10 @@ int SyntacticalAnalyzer::Stmt_List()
 /*******************************************************************************
  * Function: Stmt()                                                             *
  *                                                                              *
- * Parameters:                                                                  *
- * Return value:                                                                *
- * Description: This function will                                              *
+ * Parameters: none                                                             *
+ * Return value: an integer value, the number of errors                         *
+ * Description: This fucntion handles all cases which involve the               *
+ *			"statement" rules of our grammar.			*
  *******************************************************************************/
 int SyntacticalAnalyzer::Stmt()
 {
@@ -255,9 +260,10 @@ int SyntacticalAnalyzer::Stmt()
 /*******************************************************************************
  * Function: Literal()                                                          *
  *                                                                              *
- * Parameters:                                                                  *
- * Return value:                                                                *
- * Description: This function will                                              *
+ * Parameters: none                                                             *
+ * Return value: an integer value, the number of errors                         *
+ * Description: This fucntion handles all cases which involve any               *
+ *			"literal" rules of our grammar.				*
  *******************************************************************************/
 int SyntacticalAnalyzer::Literal()
 {
@@ -302,9 +308,10 @@ int SyntacticalAnalyzer::Literal()
 /*******************************************************************************
  * Function: Quoted_Lit()                                                       *
  *                                                                              *
- * Parameters:                                                                  *
- * Return value:                                                                *
- * Description: This function will                                              *
+ * Parameters: none                                                             *
+ * Return value: an integer value, the number of errors                         *
+ * Description: This fucntion handles all cases which involve the               *
+ *			"quoted list" rules of our grammar.			*
  *******************************************************************************/
 int SyntacticalAnalyzer::Quoted_Lit()
 {
@@ -321,9 +328,10 @@ int SyntacticalAnalyzer::Quoted_Lit()
 /*******************************************************************************
  * Function: More_Tokens()                                                      *
  *                                                                              *
- * Parameters:                                                                  *
- * Return value:                                                                *
- * Description: This function will                                              *
+ * Parameters: none                                                             *
+ * Return value: an integer value, the number of errors                         *
+ * Description: This fucntion handles all cases which involve the               *
+ *			"more tokens" rules of our grammar.			*
  *******************************************************************************/
 int SyntacticalAnalyzer::More_Tokens()
 {
@@ -346,9 +354,10 @@ int SyntacticalAnalyzer::More_Tokens()
 /*******************************************************************************
  * Function: Param_List()                                                       *
  *                                                                              *
- * Parameters:                                                                  *
- * Return value:                                                                *
- * Description: This function will                                              *
+ * Parameters: none                                                             *
+ * Return value: an integer value, the number of errors                         *
+ * Description: This fucntion handles all cases which involve the               *
+ *			"parameter list" rules of our grammar.			*
  *******************************************************************************/
 int SyntacticalAnalyzer::Param_List()
 {
@@ -374,9 +383,10 @@ int SyntacticalAnalyzer::Param_List()
 /*******************************************************************************
  * Function: Else_Part()                                                        *
  *                                                                              *
- * Parameters:                                                                  *
- * Return value:                                                                *
- * Description: This function will                                              *
+ * Parameters: none                                                             *
+ * Return value: an integer value, the number of errors                         *
+ * Description: This fucntion handles all cases which involve the               *
+ *			"else part" rules of our grammar.			*
  *******************************************************************************/
 int SyntacticalAnalyzer::Else_Part()
 {
@@ -395,9 +405,10 @@ int SyntacticalAnalyzer::Else_Part()
 /*******************************************************************************
  * Function: Stmt_Pair()                                                        *
  *                                                                              *
- * Parameters:                                                                  *
- * Return value:                                                                *
- * Description: This function will                                              *
+ * Parameters: none                                                             *
+ * Return value: an integer value, the number of errors                         *
+ * Description: This fucntion handles all cases which involve the               *
+ *			"statement pair" rules of our grammar.			*
  *******************************************************************************/
 int SyntacticalAnalyzer::Stmt_Pair()
 {
@@ -426,9 +437,10 @@ int SyntacticalAnalyzer::Stmt_Pair()
 /*******************************************************************************
  * Function: Stmt_Pair_Body()                                                   *
  *                                                                              *
- * Parameters:                                                                  *
- * Return value:                                                                *
- * Description: This function will                                              *
+ * Parameters: none                                                             *
+ * Return value: an integer value, the number of errors                         *
+ * Description: This fucntion handles further cases of "statment pair"		*
+ *			found in rules 21, 22, and 23.				*
  *******************************************************************************/
 int SyntacticalAnalyzer::Stmt_Pair_Body()
 {
@@ -472,9 +484,10 @@ int SyntacticalAnalyzer::Stmt_Pair_Body()
 /*******************************************************************************
  * Function: More_Pairs()                                                       *
  *                                                                              *
- * Parameters:                                                                  *
- * Return value:                                                                *
- * Description: This function will                                              *
+ * Parameters: none                                                             *
+ * Return value: an integer value, the number of errors                         *
+ * Description: This fucntion handles all cases which involve the               *
+ *			"more pairs" rules of our grammar.			*
  *******************************************************************************/
 int SyntacticalAnalyzer::More_Pairs()
 {
@@ -496,9 +509,10 @@ int SyntacticalAnalyzer::More_Pairs()
 /*******************************************************************************
  * Function: Action()                                                           *
  *                                                                              *
- * Parameters:                                                                  *
- * Return value:                                                                *
- * Description: This function will                                              *
+ * Parameters: none                                                             *
+ * Return value: an integer value, the number of errors                         *
+ * Description: This fucntion handles all cases which involve the               *
+ *			"action" rules of our grammar.				*
  *******************************************************************************/
 int SyntacticalAnalyzer::Action()
 {
@@ -782,9 +796,10 @@ int SyntacticalAnalyzer::Action()
 /*******************************************************************************
  * Function: Any_Other_Token()                                                  *
  *                                                                              *
- * Parameters:                                                                  *
- * Return value:                                                                *
- * Description: This function will                                              *
+ * Parameters: none                                                             *
+ * Return value: an integer value, the number of errors                         *
+ * Description: This fucntion handles all cases which involve the               *
+ *			"any other token" rules of our grammar.			*
  *******************************************************************************/
 int SyntacticalAnalyzer::Any_Other_Token()
 {
