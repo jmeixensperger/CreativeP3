@@ -111,7 +111,7 @@ int SyntacticalAnalyzer::Program ()
 int SyntacticalAnalyzer::Define()
 {
 	p2file << "Entering Define funcion; current token is: "
-           << lex->GetTokenName(token) /*<<  ", lexeme: " << lex->GetLexeme()*/ << endl;
+           << lex->GetTokenName(token) <<  ", lexeme: " << lex->GetLexeme() << endl;
 	int errors = 0;
 	p2file << "Using Rule 2" << endl;
 	if (token != LPAREN_T)
@@ -151,7 +151,7 @@ int SyntacticalAnalyzer::Define()
 	}
 	token = lex->GetToken();
 	p2file << "Exiting Define function; current token is: "
-		   << lex->GetTokenName(token) /*<<  ", lexeme: " << lex->GetLexeme()*/ << endl;
+		   << lex->GetTokenName(token) << /*", lexeme: " << lex->GetLexeme()*/ << endl;
 	return errors;
 }
 
@@ -176,7 +176,7 @@ int SyntacticalAnalyzer::More_Defines()
 		token = lex->GetToken();
 	}
 	p2file << "Exiting Stmt_List function; current token is: "
-		   << lex->GetTokenName(token) /*<<  ", lexeme: " << lex->GetLexeme()*/ << endl;
+		   << lex->GetTokenName(token) << /*", lexeme: " << lex->GetLexeme()*/ << endl;
 	return errors;
 }
 
