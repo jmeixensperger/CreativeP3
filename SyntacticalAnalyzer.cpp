@@ -155,6 +155,7 @@ int SyntacticalAnalyzer::Define()
 		lex->ReportError("Missing first right paren from define");
 	}
 	cg.WriteCode(0, ") {\n");
+	tabs++;
 	token = lex->GetToken();
 	errors += Stmt();
 	errors += Stmt_List();
@@ -163,6 +164,7 @@ int SyntacticalAnalyzer::Define()
 		errors++;
 		lex->ReportError("Missing second right paren from define");
 	}
+	tabs--;
 	cg.WriteCode(tabs, "}\n");
 	token = lex->GetToken();
 	p2file << "Exiting Define function; current token is: "
@@ -191,7 +193,7 @@ int SyntacticalAnalyzer::More_Defines()
 		errors += More_Defines();
 		token = lex->GetToken();
 	}
-	p2file << "Exiting Stmt_List function; current token is: "
+	p2file << "Exiting More_Defines function; current token is: "
 		   << lex->GetTokenName(token) /*<< ", lexeme: " << lex->GetLexeme()*/ << endl;
 	return errors;
 }
@@ -239,6 +241,7 @@ int SyntacticalAnalyzer::Stmt()
 	switch (rule)
 	{
 		case 7:
+			//TODO
 			errors += Literal();
 			break;
 		case 8:
@@ -247,6 +250,7 @@ int SyntacticalAnalyzer::Stmt()
 				errors++;
 				lex->ReportError("Missing identifier in stmt");
 			}
+			//TODO
 			token = lex->GetToken();
 			break;
 		case 9:
@@ -387,6 +391,7 @@ int SyntacticalAnalyzer::Param_List()
 			lex->ReportError("Missing identifier at start of \
 					param_list");
 		}
+		cg.WriteCode(0, "Object "+lex->GetLexeme());
 		token = lex->GetToken();
 		errors += Param_List();
 	}
