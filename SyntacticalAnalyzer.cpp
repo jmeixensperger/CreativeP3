@@ -50,9 +50,12 @@ static int table [][36] = {
  *******************************************************************************/
 SyntacticalAnalyzer::SyntacticalAnalyzer (char * filename)
 {
+	tabs = 0;
 	lex = new LexicalAnalyzer (filename);
 	string name = filename;
-	string p2name = name.substr (0, name.length()-3) + ".p2"; 
+	string p2name = name.substr (0, name.length()-3) + ".p2";
+	string cppName = name.substr (0, name.length()-3) + ".cpp";
+	cg = new CodeGen (cppName, lex); 
 	p2file.open (p2name.c_str());
 	token = lex->GetToken();
 	Program ();
@@ -69,6 +72,7 @@ SyntacticalAnalyzer::SyntacticalAnalyzer (char * filename)
  *******************************************************************************/
 SyntacticalAnalyzer::~SyntacticalAnalyzer ()
 {
+	delete cg;
 	delete lex;
 	p2file.close ();
 }
@@ -89,6 +93,9 @@ int SyntacticalAnalyzer::Program ()
 	// token should be in firsts of Program
 	// Body of function goes here.
 	p2file << "Using Rule 1" << endl;
+	cg.WriteCode(tabs, "#include \"Object.h\"\n");
+	cg.WriteCode(tabs, "#include <iostream>\n");
+	cg.WriteCode(tabs, "using namespace std;\n\n");
 	errors += Define ();
 	errors += More_Defines ();
 	if (token != EOF_T)
@@ -136,6 +143,10 @@ int SyntacticalAnalyzer::Define()
 		errors++;
 		lex->ReportError("Missing identifier from define");
 	}
+	if (lex->GetLexeme() == "main")
+		cg.WriteCode(tabs, "int main(");
+	else
+		cg.WriteCode(tabs, "Object "+lex->GetLexeme()+"(");
 	token = lex->GetToken();
 	errors += Param_List();
 	if (token != RPAREN_T)
@@ -143,6 +154,7 @@ int SyntacticalAnalyzer::Define()
 		errors++;
 		lex->ReportError("Missing first right paren from define");
 	}
+	cg.WriteCode(0, ") {\n");
 	token = lex->GetToken();
 	errors += Stmt();
 	errors += Stmt_List();
@@ -151,6 +163,7 @@ int SyntacticalAnalyzer::Define()
 		errors++;
 		lex->ReportError("Missing second right paren from define");
 	}
+	cg.WriteCode(tabs, "}\n");
 	token = lex->GetToken();
 	p2file << "Exiting Define function; current token is: "
 		   << lex->GetTokenName(token) /*<< ", lexeme: " << lex->GetLexeme()*/ << endl;
