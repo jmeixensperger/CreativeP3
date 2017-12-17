@@ -93,9 +93,9 @@ int SyntacticalAnalyzer::Program ()
 	// token should be in firsts of Program
 	// Body of function goes here.
 	p2file << "Using Rule 1" << endl;
-	cg.WriteCode(tabs, "#include \"Object.h\"\n");
-	cg.WriteCode(tabs, "#include <iostream>\n");
-	cg.WriteCode(tabs, "using namespace std;\n\n");
+	cg->WriteCode(tabs, "#include \"Object.h\"\n");
+	cg->WriteCode(tabs, "#include <iostream>\n");
+	cg->WriteCode(tabs, "using namespace std;\n\n");
 	errors += Define ();
 	errors += More_Defines ();
 	if (token != EOF_T)
@@ -144,9 +144,9 @@ int SyntacticalAnalyzer::Define()
 		lex->ReportError("Missing identifier from define");
 	}
 	if (lex->GetLexeme() == "main")
-		cg.WriteCode(tabs, "int main(");
+		cg->WriteCode(tabs, "int main(");
 	else
-		cg.WriteCode(tabs, "Object "+lex->GetLexeme()+"(");
+		cg->WriteCode(tabs, "Object "+lex->GetLexeme()+"(");
 	token = lex->GetToken();
 	errors += Param_List();
 	if (token != RPAREN_T)
@@ -154,7 +154,7 @@ int SyntacticalAnalyzer::Define()
 		errors++;
 		lex->ReportError("Missing first right paren from define");
 	}
-	cg.WriteCode(0, ") {\n");
+	cg->WriteCode(0, ") {\n");
 	tabs++;
 	token = lex->GetToken();
 	errors += Stmt();
@@ -165,7 +165,7 @@ int SyntacticalAnalyzer::Define()
 		lex->ReportError("Missing second right paren from define");
 	}
 	tabs--;
-	cg.WriteCode(tabs, "}\n");
+	cg->WriteCode(tabs, "}\n");
 	token = lex->GetToken();
 	p2file << "Exiting Define function; current token is: "
 		   << lex->GetTokenName(token) /*<< ", lexeme: " << lex->GetLexeme()*/ << endl;
@@ -391,7 +391,7 @@ int SyntacticalAnalyzer::Param_List()
 			lex->ReportError("Missing identifier at start of \
 					param_list");
 		}
-		cg.WriteCode(0, "Object "+lex->GetLexeme());
+		cg->WriteCode(0, "Object "+lex->GetLexeme());
 		token = lex->GetToken();
 		errors += Param_List();
 	}

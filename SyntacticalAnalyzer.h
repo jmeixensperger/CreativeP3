@@ -26,7 +26,7 @@ class SyntacticalAnalyzer
 	LexicalAnalyzer * lex;
 	ofstream p2file;
 	token_type token;
-	CodeGen cg;
+	CodeGen * cg;
 	int tabs;
 	int Program();
 	int Define();
