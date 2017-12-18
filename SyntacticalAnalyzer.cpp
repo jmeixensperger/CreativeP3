@@ -143,19 +143,29 @@ int SyntacticalAnalyzer::Define()
 		errors++;
 		lex->ReportError("Missing identifier from define");
 	}
+	bool isMain = false;
 	if (lex->GetLexeme() == "main")
-		cg->WriteCode(tabs, "int main(");
+	{
+		cg->WriteCode(tabs, "int main() {\n");
+		tabs++;
+		cg->WriteCode(tabs, "int retval = 0;\n");
+		isMain = true;
+	}
 	else
 		cg->WriteCode(tabs, "Object "+lex->GetLexeme()+"(");
 	token = lex->GetToken();
-	errors += Param_List();
+	errors += Param_List(true);
 	if (token != RPAREN_T)
 	{
 		errors++;
 		lex->ReportError("Missing first right paren from define");
 	}
-	cg->WriteCode(0, ") {\n");
-	tabs++;
+	if (!isMain)
+	{
+		cg->WriteCode(0, ") {\n");
+		tabs++;
+		cg->WriteCode(tabs, "Object retval;\n");
+	}
 	token = lex->GetToken();
 	errors += Stmt();
 	errors += Stmt_List();
@@ -164,6 +174,7 @@ int SyntacticalAnalyzer::Define()
 		errors++;
 		lex->ReportError("Missing second right paren from define");
 	}
+	cg->WriteCode(tabs, "return retval;\n");
 	tabs--;
 	cg->WriteCode(tabs, "}\n");
 	token = lex->GetToken();
@@ -189,6 +200,7 @@ int SyntacticalAnalyzer::More_Defines()
 	p2file << "Using Rule " << rule << endl;
 	if (rule == 3)
 	{
+		cg->WriteCode(tabs, "\n");
 		errors += Define();
 		errors += More_Defines();
 		token = lex->GetToken();
@@ -215,6 +227,7 @@ int SyntacticalAnalyzer::Stmt_List()
 	p2file << "Using Rule " << rule << endl;
 	if (rule == 5)
 	{
+		// no WriteCode calls required, instead handled by Stmt()
 		errors += Stmt();
 		errors += Stmt_List();
 	}
@@ -241,7 +254,6 @@ int SyntacticalAnalyzer::Stmt()
 	switch (rule)
 	{
 		case 7:
-			//TODO
 			errors += Literal();
 			break;
 		case 8:
@@ -250,7 +262,7 @@ int SyntacticalAnalyzer::Stmt()
 				errors++;
 				lex->ReportError("Missing identifier in stmt");
 			}
-			//TODO
+			cg->WriteCode(tabs, "return "+lex->GetLexeme()+";\n");
 			token = lex->GetToken();
 			break;
 		case 9:
@@ -297,6 +309,7 @@ int SyntacticalAnalyzer::Literal()
 				errors++;
 				lex->ReportError("Missing number for literal");
 			}
+			cg->WriteCode(tabs, "Object("+lex->GetLexeme()+")");
 			token = lex->GetToken();
 			break;
 		case 11:
@@ -305,6 +318,7 @@ int SyntacticalAnalyzer::Literal()
 				errors++;
 				lex->ReportError("Missing string for literal");
 			}
+			cg->WriteCode(tabs, "Object(\""+lex->GetLexeme()+"\")");
 			token = lex->GetToken();
 			break;
 		case 12:
@@ -313,6 +327,10 @@ int SyntacticalAnalyzer::Literal()
 				errors++;
 				lex->ReportError("Missing quote for literal");
 			}
+			// Output via WriteCode continues through Quoted_Lit()
+			// call, we must print each lexeme from the quoted lit
+			// separately.
+			cg->WriteCode(tabs, "Object(\"");
 			token = lex->GetToken();
 			errors += Quoted_Lit();
 			break;
@@ -336,6 +354,8 @@ int SyntacticalAnalyzer::Quoted_Lit()
 		<< lex->GetTokenName(token) << ", lexeme: " << lex->GetLexeme() << endl;
 	int errors = 0;
 	p2file << "Using Rule 13" << endl;
+	// WriteCode handled in Any_Other_Token() because we may need to grab
+	// multiple tokens for our quoted lit
 	errors += Any_Other_Token();
 	p2file << "Exiting Quoted_Lit function; current token is: "
 		   << lex->GetTokenName(token) /*<<  ", lexeme: " << lex->GetLexeme()*/ << endl;
@@ -376,7 +396,7 @@ int SyntacticalAnalyzer::More_Tokens()
  * Description: This fucntion handles all cases which involve the               *
  *			"parameter list" rules of our grammar.			*
  *******************************************************************************/
-int SyntacticalAnalyzer::Param_List()
+int SyntacticalAnalyzer::Param_List(bool first)
 {
 	p2file << "Entering Param_List function; current token is: "
 		<< lex->GetTokenName(token) << ", lexeme: " << lex->GetLexeme() << endl;
@@ -388,12 +408,13 @@ int SyntacticalAnalyzer::Param_List()
 		if (token != IDENT_T)
 		{
 			errors++;
-			lex->ReportError("Missing identifier at start of \
-					param_list");
+			lex->ReportError("Missing identifier in param_list");
 		}
+		if (!first)
+			cg->WriteCode(0, ", ");
 		cg->WriteCode(0, "Object "+lex->GetLexeme());
 		token = lex->GetToken();
-		errors += Param_List();
+		errors += Param_List(false);
 	}
 	return errors;
 }

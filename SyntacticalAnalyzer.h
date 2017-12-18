@@ -36,7 +36,7 @@ class SyntacticalAnalyzer
 	int Literal();
 	int Quoted_Lit();
 	int More_Tokens();
-	int Param_List();
+	int Param_List(bool first);
 	int Else_Part();
 	int Stmt_Pair();
 	int Stmt_Pair_Body();
