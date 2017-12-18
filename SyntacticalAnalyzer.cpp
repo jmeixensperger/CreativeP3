@@ -262,7 +262,7 @@ int SyntacticalAnalyzer::Stmt()
 				errors++;
 				lex->ReportError("Missing identifier in stmt");
 			}
-			cg->WriteCode(tabs, "return "+lex->GetLexeme()+";\n");
+			cg->WriteCode(tabs, lex->GetLexeme());
 			token = lex->GetToken();
 			break;
 		case 9:
@@ -333,6 +333,7 @@ int SyntacticalAnalyzer::Literal()
 			cg->WriteCode(tabs, "Object(\"");
 			token = lex->GetToken();
 			errors += Quoted_Lit();
+			cg->WriteCode(0, "\")");
 			break;
 	}
 	p2file << "Exiting Literal function; current token is: "
@@ -435,7 +436,11 @@ int SyntacticalAnalyzer::Else_Part()
 	int rule = table[9][token];
 	p2file << "Using Rule " << rule << endl;
 	if (rule == 18)
+	{
+		cg->WriteCode(tabs, "else {\n");
+		tabs++;
 		errors += Stmt();
+	}
 	p2file << "Exiting Else_Part function; current token is: "
 		   << lex->GetTokenName(token) /*<<  ", lexeme: " << lex->GetLexeme()*/ << endl;
 	return errors;
@@ -569,10 +574,15 @@ int SyntacticalAnalyzer::Action()
 				lex->ReportError("Missing if token at start\
 						of action");
 			}
+			cg->WriteCode(tabs, "if (");
 			token = lex->GetToken();
 			errors += Stmt();
+			cg->WriteCode(0, ") {\n");
+			tabs++;
 			errors += Stmt();
-			errors += Else_Part(); 
+			tabs--;
+			cg->WriteCode(tabs, "}\n");
+			errors += Else_Part();
 			break;
 		case 27:
 			if (token != COND_T)
@@ -642,8 +652,10 @@ int SyntacticalAnalyzer::Action()
 				lex->ReportError("Missing number predicate\
 					 	at start of action");
 			}
+			cg->WriteCode(0, "numberp(");
 			token = lex->GetToken();
 			errors += Stmt();
+			cg->WriteCode(0, ")");
 			break;
 		case 34:
 			if (token != SYMBOLP_T)
@@ -652,8 +664,10 @@ int SyntacticalAnalyzer::Action()
 				lex->ReportError("Missing symbol predicate\
 					 	at start of action");
 			}
+			cg->WriteCode(0, "symbolp(");
 			token = lex->GetToken();
 			errors += Stmt();
+			cg->WriteCode(0, ")");
 			break;
 		case 35:
 			if (token != LISTP_T)
@@ -662,8 +676,10 @@ int SyntacticalAnalyzer::Action()
 				lex->ReportError("Missing list predicate\
 					 	at start of action");
 			}
+			cg->WriteCode(0, "listp(");
 			token = lex->GetToken();
 			errors += Stmt();
+			cg->WriteCode(0, ")");
 			break;
 		case 36:
 			if (token != ZEROP_T)
@@ -672,8 +688,10 @@ int SyntacticalAnalyzer::Action()
 				lex->ReportError("Missing zero predicate\
 					 	at start of action");
 			}
+			cg->WriteCode(0, "zerop(");
 			token = lex->GetToken();
 			errors += Stmt();
+			cg->WriteCode(0, ")");
 			break;
 		case 37:
 			if (token != NULLP_T)
@@ -682,8 +700,10 @@ int SyntacticalAnalyzer::Action()
 				lex->ReportError("Missing null predicate\
 					 	at start of action");
 			}
+			cg->WriteCode(0, "nullp(");
 			token = lex->GetToken();
 			errors += Stmt();
+			cg->WriteCode(0, ")");
 			break;
 		case 38:
 			if (token != STRINGP_T)
@@ -692,8 +712,10 @@ int SyntacticalAnalyzer::Action()
 				lex->ReportError("Missing string predicate\
 					 	at start of action");
 			}
+			cg->WriteCode(0, "stringp(");
 			token = lex->GetToken();
 			errors += Stmt();
+			cg->WriteCode(0, ")");
 			break;
 		case 39:
 			if (token != PLUS_T)
@@ -714,6 +736,7 @@ int SyntacticalAnalyzer::Action()
 			}
 			token = lex->GetToken();
 			errors += Stmt();
+			cg->WriteCode(0, " - ");
 			errors += Stmt_List();
 			break;
 		case 41:
@@ -725,6 +748,7 @@ int SyntacticalAnalyzer::Action()
 			}
 			token = lex->GetToken();
 			errors += Stmt();
+			cg->WriteCode(0, " / ");
 			errors += Stmt_List();
 			break;
 		case 42:
@@ -746,6 +770,7 @@ int SyntacticalAnalyzer::Action()
 			}
 			token = lex->GetToken();
 			errors += Stmt();
+			cg->WriteCode(0, " % ");
 			errors += Stmt();
 			break;
 		case 44:
@@ -755,6 +780,7 @@ int SyntacticalAnalyzer::Action()
 				lex->ReportError("Missing equalto symbol\
 						at start of action");
 			}
+			//TODO:  must handle == case
 			token = lex->GetToken();
 			errors += Stmt_List();
 			break;
@@ -815,8 +841,10 @@ int SyntacticalAnalyzer::Action()
 				lex->ReportError("Missing display at start\
 						of action");
 			}
+			cg->WriteCode(tabs, "cout << ");
 			token = lex->GetToken();
 			errors += Stmt();
+			cg->WriteCode(0, ";");
 			break;
 		case 51:
 			if (token != NEWLINE_T)
@@ -824,6 +852,7 @@ int SyntacticalAnalyzer::Action()
 				errors++;
 				lex->ReportError("Missing newline in action");
 			}
+			cg->WriteCode(tabs, "cout << endl;\n");
 			token = lex->GetToken();
 			break;
 	}
